@@ -19,10 +19,37 @@
         .flash.danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         .empty { color: #888; font-style: italic; padding: 20px; }
         .actions { white-space: nowrap; }
+        .search-form { margin: 20px 0; display: flex; gap: 10px; max-width: 500px; }
+        .search-input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .search-btn { background: #2196F3; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+        .clear-btn { background: #ccc; color: #333; padding: 10px 20px; border-radius: 4px; text-decoration: none; }
+        .search-results { background: #e3f2fd; padding: 10px; border-radius: 4px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
     <h1>Student Management (Part 2 - Full CRUD)</h1>
+
+    <!-- Search Form -->
+    <div class="search-form">
+        <form method="GET" action="{{ url_for('index') }}">
+            <input type="text" 
+                   name="query" 
+                   placeholder="Search by student name..." 
+                   value="{{ search_query if search_query }}"
+                   class="search-input">
+            <button type="submit" class="search-btn">Search</button>
+            {% if search_query %}
+            <a href="{{ url_for('index') }}" class="clear-btn">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Show search results info -->
+    {% if search_query %}
+        <div class="search-results">
+            <strong>Search Results:</strong> Found {{ students|length }} student(s) for "{{ search_query }}"
+        </div>
+    {% endif %}
 
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
