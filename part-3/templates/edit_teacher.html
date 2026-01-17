@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Teacher - Part 3</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f0f4f8; }
+        h1 { color: #2c3e50; }
+        nav { margin-bottom: 20px; }
+        nav a { margin-right: 15px; color: #3498db; text-decoration: none; font-weight: bold; }
+        form { background: white; padding: 30px; border-radius: 8px; max-width: 400px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input { width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .btn { padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-submit { background: #3498db; color: white; }
+        .btn-cancel { background: #ccc; color: #333; margin-left: 10px; }
+        .info-box { background: #e8f4f8; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #2980b9; }
+        .flash { padding: 15px; margin: 15px 0; border-radius: 4px; }
+        .flash.success { background: #d4edda; color: #155724; }
+        .flash.danger { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>Edit Teacher</h1>
+
+    <nav>
+        <a href="{{ url_for('index') }}">Students</a>
+        <a href="{{ url_for('courses') }}">Courses</a>
+        <a href="{{ url_for('teachers') }}">Teachers</a>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="info-box">
+        <strong>Editing:</strong> {{ teacher.name }} (ID: {{ teacher.id }})<br>
+        <strong>Courses teaching:</strong> {{ teacher.courses|length }} courses
+    </div>
+
+    <form method="POST">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="{{ teacher.name }}" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="{{ teacher.email }}" required>
+
+        <button type="submit" class="btn btn-submit">Update Teacher</button>
+        <a href="{{ url_for('teachers') }}" class="btn btn-cancel">Cancel</a>
+    </form>
+</body>
+</html>

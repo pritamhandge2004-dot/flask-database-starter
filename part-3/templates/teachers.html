@@ -1,0 +1,101 @@
+<!-- templates/teachers.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teachers - Part 3</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f0f4f8; }
+        h1 { color: #2c3e50; }
+        nav { margin-bottom: 20px; }
+        nav a { margin-right: 15px; color: #3498db; text-decoration: none; font-weight: bold; }
+        nav a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; background: white; margin-top: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #e74c3c; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .btn { display: inline-block; padding: 8px 16px; text-decoration: none; border-radius: 4px; margin: 2px; }
+        .btn-add { background: #e74c3c; color: white; padding: 12px 24px; }
+        .btn-edit { background: #3498db; color: white; }
+        .btn-delete { background: #c0392b; color: white; }
+        .flash { padding: 15px; margin: 15px 0; border-radius: 4px; }
+        .flash.success { background: #d4edda; color: #155724; }
+        .flash.danger { background: #f8d7da; color: #721c24; }
+        .empty { color: #888; font-style: italic; }
+        .course-count { background: #9b59b6; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>Teachers Management</h1>
+
+    <nav>
+        <a href="{{ url_for('index') }}">Students</a>
+        <a href="{{ url_for('courses') }}">Courses</a>
+        <a href="{{ url_for('teachers') }}">Teachers</a>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <a href="{{ url_for('add_teacher') }}" class="btn btn-add">+ Add New Teacher</a>
+
+    {% if teachers %}
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Courses Teaching</th>
+                <th>Total Students</th>
+                <th>Actions</th>
+            </tr>
+            {% for teacher in teachers %}
+            <tr>
+                <td>{{ teacher.id }}</td>
+                <td>{{ teacher.name }}</td>
+                <td>{{ teacher.email }}</td>
+                <td>
+                    {% if teacher.courses %}
+                        <ul style="margin: 0; padding-left: 20px;">
+                            {% for course in teacher.courses %}
+                            <li>
+                                {{ course.name }}
+                                <span class="course-count">{{ course.students|length }} students</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <span style="color: #888; font-style: italic;">No courses assigned</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% set total_students = namespace(count=0) %}
+                    {% for course in teacher.courses %}
+                        {% set total_students.count = total_students.count + course.students|length %}
+                    {% endfor %}
+                    <strong>{{ total_students.count }}</strong> students total
+                </td>
+                <td>
+                    <a href="{{ url_for('edit_teacher', id=teacher.id) }}" class="btn btn-edit">Edit</a>
+
+                    <a href="{{ url_for('delete_teacher', id=teacher.id) }}"
+                       class="btn btn-delete"
+                       onclick="return confirm('Are you sure you want to delete this teacher?');">
+                       Delete
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p class="empty">No teachers yet. Add one!</p>
+    {% endif %}
+
+    <hr>
+    <p><strong>Notice:</strong> We use <code>teacher.courses</code> to get all courses taught by a teacher and <code>course.students</code> to get students in each course - that's the power of ORM relationships!</p>
+</body>
+</html>

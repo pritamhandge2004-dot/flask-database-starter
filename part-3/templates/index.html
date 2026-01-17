@@ -26,9 +26,11 @@
 <body>
     <h1>Student Management (Part 3 - SQLAlchemy ORM)</h1>
 
+    <!-- Updated Navigation - Teachers added -->
     <nav>
         <a href="{{ url_for('index') }}">Students</a>
         <a href="{{ url_for('courses') }}">Courses</a>
+        <a href="{{ url_for('teachers') }}">Teachers</a>  <!-- Teacher link added -->
     </nav>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -48,14 +50,27 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>Course</th>
+                <th>Teacher</th>  <!-- New column for Teacher -->
                 <th>Actions</th>
             </tr>
             {% for student in students %}
             <tr>
-                <td>{{ student.id }}</td>  <!-- ORM uses dot notation! -->
+                <td>{{ student.id }}</td>
                 <td>{{ student.name }}</td>
                 <td>{{ student.email }}</td>
-                <td><span class="course-badge">{{ student.course.name }}</span></td>  <!-- Access related course! -->
+                <td>
+                    <span class="course-badge">{{ student.course.name }}</span>
+                </td>
+                <td>
+                    <!-- Show teacher name if course has a teacher -->
+                    {% if student.course.teacher %}
+                        <span style="color: #e74c3c; font-weight: bold;">
+                            {{ student.course.teacher.name }}
+                        </span>
+                    {% else %}
+                        <span style="color: #888; font-style: italic;">Not assigned</span>
+                    {% endif %}
+                </td>
                 <td>
                     <a href="{{ url_for('edit_student', id=student.id) }}" class="btn btn-edit">Edit</a>
                     <a href="{{ url_for('delete_student', id=student.id) }}" class="btn btn-delete"
@@ -69,6 +84,6 @@
     {% endif %}
 
     <hr>
-    <p><strong>Notice:</strong> We use <code>student.course.name</code> to access the related course - that's the power of ORM relationships!</p>
+    <p><strong>Notice:</strong> We use <code>student.course.name</code> to access the related course and <code>student.course.teacher.name</code> to access the teacher - that's the power of ORM relationships!</p>
 </body>
 </html>
